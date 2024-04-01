@@ -1,19 +1,21 @@
-import { fetchUsers } from "@/app/lib/data";
+"use client"
+import { useEffect } from 'react';
 
-// export const count = await User.filter(users => user.username === 'user1');
+const RedirectPage = () => {
+  useEffect(() => {
+    const redirectTimer = setTimeout(() => {
+      // Redirect to a different URL after 3 seconds
+      window.location.href = '/login'; // Replace '/new-url' with the URL you want to redirect to
+    }, 0); // 3000 milliseconds = 3 seconds
 
-
-
-const Homepage = () => {
+    return () => clearTimeout(redirectTimer); // Clear the timer on unmount
+  }, []);
 
   return (
     <div>
-      Homepage
+      <img src="/logo.png" alt="Logo" class="logo"/>
     </div>
-    
-    
-  )
+  );
+};
 
-}
-
-export default Homepage
+export default RedirectPage;

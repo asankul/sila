@@ -9,10 +9,11 @@ const LoginForm = () => {
 
   return (
     <form action={formAction} className={styles.form}>
-      <h1>Login</h1>
+      <img src="/logo.png" alt="Logo" class="logo"/>
+      <h1>Войти</h1>
       <input type="text" placeholder="username" name="username" />
       <input type="password" placeholder="password" name="password" />
-      <button>Login</button>
+      <button>Войти</button>
       {state && state}
     </form>
   );
