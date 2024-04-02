@@ -1,10 +1,13 @@
 "use server";
 
+import { sql } from '@vercel/postgres';
 import { revalidatePath } from "next/cache";
 import { Product, User } from "./models";
 import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
 import { signIn } from "../auth";
+import { fetchUser } from "./data";
+
 
 export const addUser = async (formData) => {
   const { username, email, password, phone, address, isAdmin, isActive } =
@@ -15,7 +18,7 @@ export const addUser = async (formData) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = new User({
+    const newUser = {
       username,
       email,
       password: hashedPassword,
@@ -23,9 +26,10 @@ export const addUser = async (formData) => {
       address,
       isAdmin,
       isActive,
-    });
+    };
 
-    await newUser.save();
+    await sql`INSERT INTO users (username, email, password, phone, address, isAdmin, isActive)
+    VALUES (${newUser.username}, ${newUser.email}, ${newUser.password}, ${newUser.phone}, ${newUser.address}, ${newUser.isAdmin}, ${newUser.isActive})`;
   } catch (err) {
     console.log(err);
     throw new Error("Failed to create user!");
@@ -39,12 +43,16 @@ export const updateUser = async (formData) => {
   const { id, username, email, password, phone, address, isAdmin, isActive } =
     Object.fromEntries(formData);
 
+  const user = await fetchUser(id);
   try {
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const updateFields = {
       username,
       email,
-      password,
+      password: hashedPassword,
       phone,
       address,
       isAdmin,
@@ -52,11 +60,15 @@ export const updateUser = async (formData) => {
     };
 
     Object.keys(updateFields).forEach(
-      (key) =>
-        (updateFields[key] === "" || undefined) && delete updateFields[key]
+      (key) => {
+        if (updateFields[key] === "" || undefined) {
+          updateFields[key] = user[key];
+        }
+      }
     );
 
-    await User.findByIdAndUpdate(id, updateFields);
+    await sql`UPDATE users SET username = ${updateFields.username}, email = ${updateFields.email}, password= ${updateFields.password}, phone= ${updateFields.phone}, address= ${updateFields.address}, isAdmin= ${updateFields.isAdmin}, isActive= ${updateFields.isActive}   WHERE id = ${id}`;
+
   } catch (err) {
     console.log(err);
     throw new Error("Failed to update user!");
@@ -126,13 +138,15 @@ export const deleteUser = async (formData) => {
 
   try {
 
-    await User.findByIdAndDelete(id);
+    await sql`DELETE FROM users WHERE id = ${id}`;
+
   } catch (err) {
     console.log(err);
     throw new Error("Failed to delete user!");
   }
-
-  revalidatePath("/dashboard/products");
+  
+  revalidatePath("/dashboard/users");
+  redirect("/dashboard/users");
 };
 
 export const deleteProduct = async (formData) => {

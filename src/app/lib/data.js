@@ -1,4 +1,5 @@
 import { Product, User } from "./models";
+import { sql } from "@vercel/postgres";
 
 
 export const fetchUsers = async (q, page) => {
@@ -9,8 +10,9 @@ export const fetchUsers = async (q, page) => {
   const endIndex = startIndex + ITEM_PER_PAGE;
 
   try { 
-    const query = await User;
-    const result = query.filter(user => regex.test(user.username))
+    const query = await sql`SELECT * FROM USERS;`;
+    const rows = query.rows
+    const result = rows.filter(user => regex.test(user.username))
     const count = result.length;
     const users = result.slice(startIndex, endIndex);
     return { count, users };
@@ -21,10 +23,10 @@ export const fetchUsers = async (q, page) => {
 };
 
 export const fetchUser = async (id) => {
-  console.log(id);
   try {
-    const query = await User;
-    const user = query.filter(user => regex.test(user.id))
+    const query = await sql`SELECT * FROM USERS;`;
+    const rows = query.rows
+    const user = rows.find(user => user.id === parseInt(id));
     return user;
   } catch (err) {
     console.log(err);

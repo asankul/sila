@@ -1,5 +1,5 @@
-import { deleteUser } from "@/app/lib/actions";
-import { fetchUsers } from "@/app/lib/data";
+import { deleteUser } from "../../lib/actions";
+import { fetchUsers } from "../../lib/data";
 import Pagination from "@/app/ui/dashboard/pagination/pagination";
 import Search from "@/app/ui/dashboard/search/search";
 import styles from "@/app/ui/dashboard/users/users.module.css";
@@ -46,9 +46,9 @@ const UsersPage = async ({ searchParams }) => {
                 </div>
               </td>
               <td>{user.email}</td>
-              <td>{user.createdAt?.toString().slice(4, 16)}</td>
-              <td>{user.isAdmin ? "Admin" : "Client"}</td>
-              <td>{user.isActive ? "active" : "passive"}</td>
+              <td>{user.created_at?.toString().slice(4, 16)}</td>
+              <td>{user.isadmin ? "Admin" : "Client"}</td>
+              <td>{user.isactive ? "active" : "passive"}</td>
               <td>
                 <div className={styles.buttons}>
                   <Link href={`/dashboard/users/${user.id}`}>

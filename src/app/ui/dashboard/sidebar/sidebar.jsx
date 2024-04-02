@@ -1,6 +1,7 @@
 import Image from "next/image";
 import MenuLink from "./menuLink/menuLink";
 import styles from "./sidebar.module.css";
+import { auth, signOut } from "../../../auth";
 import {
   MdDashboard,
   MdSupervisedUserCircle,
@@ -13,7 +14,7 @@ import {
   MdHelpCenter,
   MdLogout,
 } from "react-icons/md";
-import { auth, signOut } from "@/app/auth";
+
 
 const menuItems = [
   {

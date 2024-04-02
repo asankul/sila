@@ -26,8 +26,7 @@ export const checkAndCreateUsers = async () => {
       console.log('Table "Users" created successfully.');
     } else {
       console.log('Table "Users" already exists.');
-      const query = (await sql`SELECT * FROM USERS;`);
-      const count = query.rowCount;
+      const query = await sql`SELECT * FROM USERS;`;
       const users = query.rows
       return  users;
     }
